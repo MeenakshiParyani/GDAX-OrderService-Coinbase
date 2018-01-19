@@ -56,9 +56,6 @@ function sellCurrency(bids, amount, quoteCurrency, res){
 function getQuotesFromBids(bids, amount, quoteCurrency){
   return new Promise(function(resolve, reject) {
       if(bids && bids.length){
-        console.log('before' + bids[0]);
-        bids = sortByPrice(bids, false); // If asks sort by ascending, if bids sort by descending
-        console.log('after' + bids[0]);
         var updatedAmt = amount;
         var i=0;
         var pricePerUnitFinal = 0;
@@ -100,9 +97,6 @@ function getQuotesFromBids(bids, amount, quoteCurrency){
 function getQuotesFromAsks(asks, amount, quoteCurrency){
   return new Promise(function(resolve, reject) {
       if(asks && asks.length){
-        console.log('before' + asks[0]);
-        asks = sortByPrice(asks, true); // If asks sort by ascending, if bids sort by descending
-        console.log('after' + asks[0]);
         var updatedAmt = amount;
         var i=0;
         var pricePerUnitFinal = 0;
@@ -142,32 +136,6 @@ function getQuotesFromAsks(asks, amount, quoteCurrency){
       }
   });
 
-}
-
-// Sort the bids and asks by price which is the first value of the array
-function sortByPrice(items, sortAscending){
-  if(sortAscending){
-      items.sort(function (itemA, itemB) {
-        if (itemA[0] === itemB[0]) {
-            return 0;
-        }
-        else {
-            return (itemA[0] < itemB[0]) ? -1 : 1;
-        }
-    });
-  }else{
-    items.sort(function (itemA, itemB) {
-      if (itemA[0] === itemB[0]) {
-          return 0;
-      }
-      else {
-          return (itemB[0] < itemA[0]) ? -1 : 1;
-      }
-    });
-  }
-
-    console.log(items);
-    return items;
 }
 
 function isTradePossible(baseCurrency, quoteCurrency){

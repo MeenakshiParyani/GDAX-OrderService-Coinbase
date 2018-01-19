@@ -45,7 +45,7 @@ router.post('/', function(req,res){
 function getQuotesFromBids(bids){
     console.log(bids);
     bids = sortByPrice(bids);
-
+    
 }
 
 function getQuotesFromAsks(asks){
@@ -73,9 +73,9 @@ function isTradePossible(baseCurrency, quoteCurrency){
       console.log("success ");
       if(data.statusCode == 200){
         console.log("status is ");
-        console.log(data.body.bids);
-        bids = data.body.bids;
-        asks = data.body.asks;
+        console.log(typeof data.body);
+        bids = JSON.parse(data.body).bids;
+        asks = JSON.parse(data.body).asks;
         return true;
       }else{
         // If first Combination didnt work, try reverse Combination

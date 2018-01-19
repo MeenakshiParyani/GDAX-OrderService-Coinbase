@@ -14,43 +14,85 @@ router.post('/', function(req,res){
 
   // See if the trade is possible
   isTradePossible(baseCurrency, quoteCurrency).then(function(status){
-      console.log("Final--");
-      console.log(status);
-      if(status){// If Orderbook is present
-          //res.json(true);
-
-
+      // If Orderbook is present
+      if(status){
           switch(action){
-             case 'buy'  : getQuotesFromAsks(asks).then(function(quote){
-                              res.json(quote);
+             case 'buy'  : getQuotesFromAsks(asks, amount, quoteCurrency)
+                           .then(function(response){
+                              res.json(response);
+                           })
+                           .catch(function(err){
+                              res.json(err);
                            });
                            break;
-             case 'sell' : getQuotesFromBids(bids).then(function(quote){
-                              res.json(quote);
+             case 'sell' : getQuotesFromBids(bids, amount, quoteCurrency)
+                           .then(function(response){
+                              res.json(response);
+                           })
+                           .catch(function(err){
+                              res.json(err);
                            });
                            break;
-             default     : res.json({"error" : "Invalid action, Please choose from buy/sell"});
+             default     : res.json({"error" : "Invalid action, Please choose from buy/sell!!"});
 
           }
-
-
       }else{//If Orderbook is not present
-        res.json({"error" : "Given Currencies can not be traded"});
+        res.json({"error" : "Given Currencies can not be traded!!"});
       }
-
   });
 
 });
 
-function getQuotesFromBids(bids){
-    console.log(bids);
+function getQuotesFromBids(bids, amount, quoteCurrency){
     bids = sortByPrice(bids);
-    
+    return bids;
 }
 
-function getQuotesFromAsks(asks){
-    console.log(asks);
-    asks = sortByPrice(asks);
+function getQuotesFromAsks(asks, amount, quoteCurrency){
+  return new Promise(function(resolve, reject) {
+      if(asks && asks.length){
+        console.log('before' + asks[0]);
+        asks = sortByPrice(asks);
+        console.log('after' + asks[0]);
+        let updatedAmt = amount;
+        let i=0;
+        let pricePerUnitFinal = 0;
+        var totalPrice = 0;
+        while(updatedAmt > 0 && i <asks.length){
+            let perUnitPrice = asks[i][0];
+            let size = asks[i][1];
+            console.log(perUnitPrice + ' ' + size);
+            console.log(i);
+            if((updatedAmt - size) <= 0){
+                console.log('total if ' + totalPrice + ' ' + updatedAmt + ' ' + perUnitPrice);
+                totalPrice = totalPrice + (updatedAmt * perUnitPrice);
+                updatedAmt = 0;
+            }else{
+                console.log('total else ' + totalPrice + ' ' + (size));
+                totalPrice = totalPrice + (size  * perUnitPrice);
+                updatedAmt = updatedAmt - size ;
+            }
+            i++;
+        }
+        // Check if the asks could not meet the requirement
+        if(updatedAmt > 0){
+            reject({"error" : "Quantity not available, try with lower quantity!!"});
+        }else{
+          // Requirement was met
+          pricePerUnitFinal = totalPrice / amount;
+          let quote = {
+              "total"    : totalPrice,
+              "price"    : pricePerUnitFinal,
+              "currency" : quoteCurrency
+          }
+          resolve(quote);
+        }
+
+      }else{
+          reject({"error" : "Nothing available to buy at the moment!!"});
+      }
+  });
+
 }
 
 // Sort the bids and asks by price which is the first value of the array
@@ -63,6 +105,7 @@ function sortByPrice(items){
           return (itemA[0] < itemB[0]) ? -1 : 1;
       }
     });
+    console.log(items);
     return items;
 }
 
@@ -76,6 +119,7 @@ function isTradePossible(baseCurrency, quoteCurrency){
         console.log(typeof data.body);
         bids = JSON.parse(data.body).bids;
         asks = JSON.parse(data.body).asks;
+        console.log(asks);
         return true;
       }else{
         // If first Combination didnt work, try reverse Combination
@@ -92,7 +136,6 @@ function isTradePossible(baseCurrency, quoteCurrency){
 
 // Get Trade Status Error Callback Handler
 function errorCallback(err){
-  console.log("success ");
   return false;
 }
 

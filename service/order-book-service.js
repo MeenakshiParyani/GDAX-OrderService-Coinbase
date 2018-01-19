@@ -6,6 +6,9 @@ function getTradeStatusFromOrderBookService(currency1, currency2){
         url: url,
         headers: {
             'User-Agent': 'request'
+        },
+        qs: {
+            'level' : 2
         }
     };
 
@@ -17,9 +20,9 @@ function getTradeStatusFromOrderBookService(currency1, currency2){
             if(res.statusCode==400){
               console.log('Status: ' + res.statusCode);
                 console.log('Error is ');
-                console.log(err);
-                console.log(res);
-                console.log(body);
+                console.log(err);//
+                console.log(res);//
+                console.log(body);//
                 reject(err);
             }else{
                 console.log('Status: ' + res.statusCode);

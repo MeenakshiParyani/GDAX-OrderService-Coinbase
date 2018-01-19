@@ -125,6 +125,8 @@ function isTradePossible(baseCurrency, quoteCurrency){
         // If first Combination didnt work, try reverse Combination
         return orderbookService.getTradeStatus(quoteCurrency, baseCurrency).then(function(data){
           if(data.statusCode == 200){
+            bids = JSON.parse(data.body).bids;
+            asks = JSON.parse(data.body).asks;// TODO - see reverse calculation
             return true;
           }else{
             return false;

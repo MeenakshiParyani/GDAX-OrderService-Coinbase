@@ -1,4 +1,3 @@
-var https = require('https');
 var request = require("request");
 
 function getTradeStatusFromOrderBookService(currency1, currency2){
@@ -27,17 +26,6 @@ function getTradeStatusFromOrderBookService(currency1, currency2){
                 console.log(body);
                 resolve(res);
             }
-            // res.on('data' , (data) => {
-            //     console.log('Status: ' + res.statusCode);
-            //     console.log(res);
-            //     resolve(JSON.parse(res.body));
-            // });
-            //
-            // res.on('error', (err) => {
-            //     console.log('Error is ');
-            //     console.log(err);
-            //     reject(err);
-            // });
         });
 
 

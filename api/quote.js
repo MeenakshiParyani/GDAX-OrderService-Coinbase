@@ -12,10 +12,15 @@ router.post('/', function(req,res){
   var amount        = req.body.amount;
 
   // See if the trade is possible
-  isTradePossible(baseCurrency, quoteCurrency).then(function(data){
+  isTradePossible(baseCurrency, quoteCurrency).then(function(status){
     console.log("Final--");
-    console.log(data);
-    res.json(data);
+    console.log(status);
+    if(status){// If Orderbook is present
+        res.json(true);
+    }else{//If Orderbook is not present
+      res.json({"error" : "Given Currencies can not be traded"});
+    }
+
   });
 
 });
@@ -27,14 +32,14 @@ function isTradePossible(baseCurrency, quoteCurrency){
       console.log("success ");
       if(data.statusCode == 200){
         console.log("status is ")
-        return {"status" : true};
+        return true;
       }else{
         // If first Combination didnt work, try another
         return orderbookService.getTradeStatus(quoteCurrency, baseCurrency).then(function(data){
           if(data.statusCode == 200){
-            return {"status" : true};
+            return true;
           }else{
-            return {"status" : false};
+            return false;
           }
         }, errorCallback);
       }

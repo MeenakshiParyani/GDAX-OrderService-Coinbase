@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/MeenakshiParyani/GDAX-OrderService-Coinbase/issues"
   },
-  "homepage": "https://github.com/MeenakshiParyani/GDAX-OrderService-Coinbase#readme"
+  "homepage": "https://github.com/MeenakshiParyani/GDAX-OrderService-Coinbase#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "request": "^2.83.0"
+  }
 }

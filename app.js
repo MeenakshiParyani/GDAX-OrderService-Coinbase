@@ -1,12 +1,15 @@
+var express = require('express');
+var bodyParser = require('body-parser');
+
 var quoteAPI = require('./api/quote.js');
+
 
 // Express
 var app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(cookieParser());
 
-app.use('/api/getQuote', quoteAPI);
+app.use('/api/quote', quoteAPI);
 
 // Start Server
 app.listen(3000);

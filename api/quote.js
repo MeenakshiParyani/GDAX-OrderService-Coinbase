@@ -62,7 +62,6 @@ function isTradePossible(baseCurrency, quoteCurrency){
 
 // Using asks for buying
 function buyCurrency(asks, amount, quoteCurrency, res){
-    console.log('Buying in ' + quoteCurrency);
     getQuotesFromAsks(asks, amount, quoteCurrency)
     .then(function(response){
         res.status(200).json(response);
@@ -74,7 +73,6 @@ function buyCurrency(asks, amount, quoteCurrency, res){
 
 // Using bids for selling
 function sellCurrency(bids, amount, quoteCurrency, res){
-    console.log('Selling in ' + quoteCurrency);
     getQuotesFromBids(bids, amount, quoteCurrency)
     .then(function(response){
         res.status(200).send(response);

@@ -1,6 +1,6 @@
 # GDAX-OrderService-Coinbase
 
-#### Steps for installing the project	
+#### Steps for installing and Running the service	
  		
  ```		
  > cd GDAX-OrderService-Coinbase	

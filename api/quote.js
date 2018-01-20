@@ -3,9 +3,10 @@ var router = express.Router();
 var orderbookService = require('../service/order-book-service.js');
 var bids = [];
 var asks = [];
-var currencyReversed = false;
+let currencyReversed;
 
 router.post('/', function(req,res){
+  currencyReversed = false;
   // Take the API input
   console.log(req.body);
   var action        = req.body.action;
@@ -16,15 +17,16 @@ router.post('/', function(req,res){
   // See if the trade is possible
   isTradePossible(baseCurrency, quoteCurrency).then(function(status){
       // If Orderbook is present
+
       if(status){
+          console.log('Currency Reversed' + currencyReversed);
           switch(action){
             //** for ex - buying USD equivalent to selling BTC as orderbook has BTC values only(only for one currency at a time)
              case 'buy'  : currencyReversed ? sellCurrency(bids, amount, quoteCurrency, res) : buyCurrency(asks, amount, quoteCurrency, res);
                            break;
-             case 'sell' : currencyReversed ? buyCurrency(asks, amount, quoteCurrency, res)  : sellCurrency(bids, amount, quoteCurrency, res);
+             case 'sell' : currencyReversed ? sellCurrency(bids, amount, quoteCurrency, res) : buyCurrency(asks, amount, quoteCurrency, res);
                            break;
              default     : res.status(401).send({"error" : "Invalid action, Please choose from buy/sell!!"});
-
           }
       }else{//If Orderbook is not present
         res.json({"error" : "Given Currencies can not be traded!!"});
@@ -34,6 +36,7 @@ router.post('/', function(req,res){
 });
 
 function buyCurrency(asks, amount, quoteCurrency, res){
+    console.log('Buying in ' + quoteCurrency);
     getQuotesFromAsks(asks, amount, quoteCurrency)
     .then(function(response){
        res.json(response);
@@ -44,6 +47,7 @@ function buyCurrency(asks, amount, quoteCurrency, res){
 }
 
 function sellCurrency(bids, amount, quoteCurrency, res){
+    console.log('Selling in ' + quoteCurrency);
     getQuotesFromBids(bids, amount, quoteCurrency)
     .then(function(response){
        res.json(response);
@@ -61,14 +65,14 @@ function getQuotesFromBids(bids, amount, quoteCurrency){
         var pricePerUnitFinal = 0;
         var totalPrice = 0;
         while(updatedAmt > 0 && i <bids.length){
-          var perUnitPrice = asks[i][0];
-          var size = asks[i][1];
+            let size = bids[i][1];
+            let perUnitPrice = bids[i][0];
             if(updatedAmt - (size * perUnitPrice) <=0){
-                totalPrice = totalPrice + (updatedAmt / (perUnitPrice * size));
+                totalPrice = totalPrice + ((updatedAmt / perUnitPrice) * 1);
                 console.log('total if ' + totalPrice + ' ' + updatedAmt + ' ' + perUnitPrice);
                 updatedAmt = 0;
             }else{
-                totalPrice = totalPrice + size;
+                totalPrice = totalPrice + (size * 1);
                 updatedAmt = updatedAmt - (size * perUnitPrice);
                 console.log('total else ' + totalPrice + ' ' + perUnitPrice + ' ' + size + ' ' + updatedAmt);
             }

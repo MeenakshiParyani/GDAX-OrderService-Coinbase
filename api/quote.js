@@ -57,7 +57,7 @@ function sellCurrency(bids, amount, quoteCurrency, res){
     });
 }
 
-function getQuotesFromBids(bids, amount, quoteCurrency){
+function getQuotesFromBids(bids, amount, quoteCurrency, currencyReversed){
   return new Promise(function(resolve, reject) {
       if(bids && bids.length){
         var updatedAmt = amount;
@@ -150,6 +150,8 @@ function isTradePossible(baseCurrency, quoteCurrency){
       if(data.statusCode == 200){
         console.log("status is ");
         console.log(typeof data.body);
+        // bids = getBids();//JSON.parse(data.body).bids;
+        // asks = getAsks(); //JSON.parse(data.body).asks;
         bids = JSON.parse(data.body).bids;
         asks = JSON.parse(data.body).asks;
         console.log(asks);
@@ -175,6 +177,37 @@ function isTradePossible(baseCurrency, quoteCurrency){
 // Get Trade Status Error Callback Handler
 function errorCallback(err){
   return false;
+}
+
+function getBids(){
+  return [
+        [
+            "11265",
+            "3",
+            14
+        ],
+        [
+            "11264",
+            "7",
+            6
+        ]
+      ];
+
+}
+
+function getAsks(){
+  return [
+        [
+            "11265",
+            "5",
+            4
+        ],
+        [
+            "11270",
+            "1",
+            2
+        ]
+      ];
 }
 
 // Return Router
